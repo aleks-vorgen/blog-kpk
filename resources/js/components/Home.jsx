@@ -1,4 +1,3 @@
-import * as React from "react";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -7,11 +6,12 @@ import { Button, Pagination } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import PostCard from "./post/PostCard";
 import Search from "./search/Search";
+import { useState } from "react";
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export default function Home() {
-    const [page, setPage] = React.useState(1);
+    const [page, setPage] = useState(1);
 
     const handleChange = (event, value) => {
         setPage(value);
@@ -29,21 +29,22 @@ export default function Home() {
                 <Container maxWidth="sm">
                     <Typography
                         component="h1"
-                        variant="h2"
+                        variant="h4"
                         align="center"
                         color="text.primary"
                         gutterBottom
                     >
-                        Album layout
+                        Ignite Your Passion: Explore the Ultimate Sports Blog
                     </Typography>
                     <Typography
-                        variant="h5"
+                        variant="body1"
                         align="center"
                         color="text.secondary"
                         paragraph
                     >
-                        Something short and leading about the collection
-                        below—its contents, the creator, etc.
+                        Dive into a world of sports excitement! Ignite your
+                        enthusiasm and stay informed with the ultimate sports
+                        lifestyle hub!
                     </Typography>
                 </Container>
             </Box>

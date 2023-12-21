@@ -1,4 +1,3 @@
-import * as React from "react";
 import { alpha, InputBase } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import styled from "@emotion/styled";

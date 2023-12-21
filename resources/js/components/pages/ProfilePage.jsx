@@ -1,29 +1,17 @@
-import {
-    Autocomplete,
-    Box,
-    Button,
-    Card,
-    CardContent,
-    CardMedia,
-    Container,
-    Fab,
-    Grid,
-    IconButton,
-    TextField,
-    Tooltip,
-    Typography,
-} from "@mui/material";
+import { Box, Container, Fab, Grid, IconButton, Tooltip } from "@mui/material";
 import PostCard from "../post/PostCard";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useState } from "react";
-import { CreateEditPost } from "../modals/CreateEditPost";
-import { DeleteModal } from "../modals/DeleteModal";
+import CreateEditPostModal from "../post/CreateEditPostModal";
+import DeleteModal from "../shared/DeleteModal";
+import UserCard from "../user/UserCard";
+import UserForm from "../user/UserForm";
 
 const ownPosts = [1, 2, 3, 4, 5];
 
-export const ProfilePage = () => {
+export default function ProfilePage() {
     const [isCreationPostModalOpen, setIsCreationPostModalOpen] =
         useState(false);
     const [isEditPostModalOpen, setIsEditPostModalOpen] = useState(false);
@@ -61,99 +49,14 @@ export const ProfilePage = () => {
                 sx={{ py: 2, justifyContent: "center" }}
             >
                 <Grid item xs={4}>
-                    <Card
-                        sx={{
-                            height: "100%",
-                            display: "flex",
-                            flexDirection: "column",
-                        }}
-                    >
-                        <CardMedia
-                            component="div"
-                            sx={{
-                                pt: "56.25%",
-                            }}
-                            image="https://source.unsplash.com/random?wallpapers"
-                            alt="user"
-                        />
-                        <CardContent>
-                            <Typography
-                                gutterBottom
-                                variant="h5"
-                                component="div"
-                                sx={{textAlign: 'center'}}
-                            >
-                                Full name
-                            </Typography>
-                            <Typography
-                                gutterBottom
-                                variant="subtitle1"
-                                component="div"
-                            >
-                                @email
-                            </Typography>
-                        </CardContent>
-                    </Card>
+                    <UserCard />
                 </Grid>
                 <Grid item xs={8}>
-                    <Box
-                        component="form"
-                        noValidate
-                        // onSubmit={handleSubmit}
-                        sx={{
-                            mt: 3,
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "center",
-                        }}
-                    >
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <TextField
-                                    autoComplete="name"
-                                    name="name"
-                                    required
-                                    fullWidth
-                                    id="name"
-                                    label="Full Name"
-                                    autoFocus
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    required
-                                    fullWidth
-                                    id="email"
-                                    label="Email Address"
-                                    name="email"
-                                    autoComplete="email"
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    required
-                                    fullWidth
-                                    name="image"
-                                    type="file"
-                                    id="image"
-                                    autoComplete="image"
-                                />
-                            </Grid>
-                        </Grid>
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2, width: 200 }}
-                        >
-                            Submit
-                        </Button>
-                    </Box>
+                    <UserForm />
                 </Grid>
                 <Grid item container xs={12} spacing={4} sx={{ mt: 2 }}>
                     {ownPosts.map((post) => (
-                        <Grid item xs={4}>
+                        <Grid item xs={4} key={post}>
                             <PostCard>
                                 <Box>
                                     <Tooltip title="Delete" placement="top">
@@ -187,11 +90,11 @@ export const ProfilePage = () => {
                             <AddIcon />
                         </Fab>
                     </Tooltip>
-                    <CreateEditPost
+                    <CreateEditPostModal
                         open={isCreationPostModalOpen}
                         onClose={onCreationPostModalClose}
                     />
-                    <CreateEditPost
+                    <CreateEditPostModal
                         open={isEditPostModalOpen}
                         onClose={onEditPostModalClose}
                         // post={post}
@@ -207,4 +110,4 @@ export const ProfilePage = () => {
             </Grid>
         </Container>
     );
-};
+}

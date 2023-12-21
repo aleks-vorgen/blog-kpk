@@ -13,7 +13,7 @@ export default function CommentCreationForm({ onClose }) {
                 multiline
                 maxRows={10}
             />
-            <Button variant="contained" sx={{ mt: 2 }}>
+            <Button variant="contained" sx={{ mt: 2 }} >
                 Post Comment
             </Button>
             {onClose && (

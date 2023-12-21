@@ -5,15 +5,14 @@ import {
     DialogContent,
     DialogActions,
     Button,
-    Box,
     Avatar,
     Stack,
 } from "@mui/material";
-import SignIn from "../sign-in/SignIn";
-import SignUp from "../sign-up/SignUp";
+import SignIn from "../authorization/sign-in/SignIn";
+import SignUp from "../authorization/sign-up/SignUp";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
-export const AuthModal = ({ open, onClose }) => {
+export default function AuthModal ({ open, onClose }) {
     const [userRegistered, setUserRegistered] = useState(true);
 
     const onCloseModal = () => {

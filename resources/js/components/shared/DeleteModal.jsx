@@ -10,13 +10,13 @@ import {
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 
-export const DeleteModal = ({
+export default function DeleteModal({
     open,
     onClose,
     onDelete,
     title,
     description,
-}) => {
+}) {
     return (
         <Dialog
             open={open}
@@ -55,4 +55,4 @@ export const DeleteModal = ({
             </DialogActions>
         </Dialog>
     );
-};
+}

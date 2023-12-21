@@ -1,11 +1,13 @@
 import AppBar from "@mui/material/AppBar";
+import * as React from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { AuthModal } from "../modals/AuthModal";
+import AuthModal from "../authorization/AuthModal";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import LogoIcon from "../icons/LogoIcon.png";
 
 export default function Header() {
     const [showAuthModal, setShowAuthModal] = useState(false);
@@ -38,7 +40,14 @@ export default function Header() {
                             mr: 2,
                         }}
                     >
-                        Sport
+                        <Box sx={{ height: 45 }}>
+                            <img
+                                src={LogoIcon}
+                                alt="Logo"
+                                height="100%"
+                                width="100%"
+                            />
+                        </Box>
                     </Typography>
                     <Box>
                         <Typography

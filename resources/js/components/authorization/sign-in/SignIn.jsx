@@ -1,4 +1,3 @@
-import * as React from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -6,9 +5,6 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import { createTheme } from "@mui/material/styles";
-
-const defaultTheme = createTheme();
 
 export default function SignIn() {
     const handleSubmit = (event) => {

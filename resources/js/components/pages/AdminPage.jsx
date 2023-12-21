@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { Container, Tab, Tabs } from "@mui/material";
-import { Link, useNavigate, Outlet, Route, useParams } from "react-router-dom";
-import UsersList from "./UsersList";
-import TopicsList from "./TopicsList"; // Assuming TopicsList is exported from TopicsList.js
+import { Link, useNavigate, useParams } from "react-router-dom";
+import UsersList from "../user/UsersList";
+import TopicsList from "../topic/TopicsList";
 
 export default function AdminPage() {
     const navigate = useNavigate();
@@ -19,7 +19,6 @@ export default function AdminPage() {
         }
     }, [params.tabName]);
 
-    // Navigation logic outside useEffect
     const handleChange = (_, newValue) => {
         navigate(`/admin/${newValue}`);
     };
