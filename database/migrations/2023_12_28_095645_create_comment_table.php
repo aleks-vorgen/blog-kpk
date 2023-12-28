@@ -11,17 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('coment', function (Blueprint $table) {
+        Schema::create('comment', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->string('text');
             $table->boolean('delete');
 
-            $table->bigInteger('coment_id');
+            $table->bigInteger('comment_id');
             $table->bigInteger('user_id');
             $table->bigInteger('article_id');
 
-            $table->foreign('coment_id')->references('id')->on('coment');
+            $table->foreign('comment_id')->references('id')->on('comment');
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('article_id')->references('id')->on('article');
         });
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('coment');
+        Schema::dropIfExists('comment');
     }
 };
