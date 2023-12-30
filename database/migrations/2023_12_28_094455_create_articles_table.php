@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('description');
             $table->string('image');
             $table->string('tag');
-            $table->boolean('viewed');
-
             $table->bigInteger('topic_id');
             $table->bigInteger('user_id');
 
