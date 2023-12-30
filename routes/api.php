@@ -20,24 +20,30 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['middleware' => ['jwt.auth','api-header']], function () {
+    //Authorized routes
 
-    // all routes to protected resources are registered here
-    Route::get('user/list', 'UserController@index')
-        ->middleware(['role:admin']);
+    //User routes
+    Route::get('user', 'UserController@index');
     Route::get('user/{user}', 'UserController@show');
-    Route::post('user','UserController@store');
-    Route::put('user/{user}','UserController@update');
-    Route::delete('user/{user}', 'UserController@delete');
+    Route::put('user/{user}','UserController@update')->middleware(['role:admin']);
+    Route::delete('user/{user}', 'UserController@delete')->middleware(['role:admin']);
+
+    //Topic routes
+    Route::post('topic', 'TopicController@store')->middleware(['role:admin']);
+    Route::put('topic/{topic}', 'TopicController@update')->middleware(['role:admin']);
+    Route::delete('topic/{topic}', 'TopicController@delete')->middleware(['role:admin']);
 });
 
 Route::group(['middleware' => 'api-header'], function () {
+    //Unauthorized routes
 
-    // The registration and login requests doesn't come with tokens
-    // as users at that point have not been authenticated yet
-    // Therefore the jwtMiddleware will be exclusive of them
-
+    //User routes
     Route::post('user/login', 'UserController@login');
     Route::post('user/register', 'UserController@register');
+
+    //Topic routes
+    Route::get('topic', 'TopicController@index');
+    Route::get('topic/{topic}', 'TopicController@show');
 });
 
 
