@@ -99,7 +99,7 @@ class UserController extends Controller
             ];
         }
         else
-            $response = ['success'=>false, 'data'=>'Record doesnt exists'];
+            return response()->json(['success'=>false, 'data'=>'Record doesnt exists'], 401);
 
         return response()->json($response, 201);
     }
