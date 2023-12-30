@@ -76,7 +76,7 @@ class TopicController extends Controller
      * Remove the specified resource from storage.
      */
     public function delete($id) {
-        $topic = Topic::where('id', $id);
+        $topic = Topic::where('id', $id)->first();
         Topic::destroy($id);
 
         return response()->json([
