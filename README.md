@@ -3,17 +3,17 @@
 cp .env.example .env
 ```
 
-### Generate an application key
-```
-php artisan key:generate
-```
-
 ### Install dependencies
 ```
 composer install
 ```
 ```
 npm install
+```
+
+### Generate an application key
+```
+php artisan key:generate
 ```
 
 ### Run database migrations and seeders after configuring DB connection in .env to create tables and seed users with roles
