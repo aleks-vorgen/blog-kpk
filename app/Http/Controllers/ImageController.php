@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Image;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use Illuminate\Support\Facades\Storage;
 
 class ImageController extends Controller
 {
@@ -13,5 +11,11 @@ class ImageController extends Controller
         $image_path = $request->store('image', 'public');
 
         return $image_path;
+    }
+
+    public function download($fileName) {
+        $path = url('image/'.$fileName);
+        $filePath = storage_path('/app/public/image/'.$fileName);
+        return response()->file($filePath);
     }
 }

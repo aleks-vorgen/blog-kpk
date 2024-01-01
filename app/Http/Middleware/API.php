@@ -16,10 +16,23 @@ class API
      */
     public function handle($request, Closure $next)
     {
+        $headers = [
+            'Access-Control-Allow-Origin'      => '*',
+            'Access-Control-Allow-Methods'     => 'POST, GET, OPTIONS',
+            'Access-Control-Allow-Credentials' => 'true',
+            'Access-Control-Max-Age'           => '86400',
+            'Access-Control-Allow-Headers'     => 'Content-Type, Authorization, X-Requested-With'
+        ];
+
+        if ($request->isMethod('OPTIONS')) {
+            return response()->json('{"method":"OPTIONS"}', 200, $headers);
+        }
+
         $response = $next($request);
-        $response->header('Access-Control-Allow-Headers', 'Origin, Content-Type, Content-Range, Content-Disposition, Content-Description, X-Auth-Token, Authorization');
-        $response->header('Access-Control-Allow-Origin', '*');
-        //add more headers here
+        foreach($headers as $key => $value) {
+            $response->headers->set($key, $value);
+        }
+
         return $response;
     }
 }

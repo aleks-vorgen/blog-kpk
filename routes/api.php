@@ -42,6 +42,9 @@ Route::group(['middleware' => ['jwt.auth','api-header']], function () {
 Route::group(['middleware' => 'api-header'], function () {
     //Unauthorized routes
 
+    //Image routes
+    Route::get('image/{filename}', 'ImageController@download');
+
     //User routes
     Route::post('user/login', 'UserController@login');
     Route::post('user/register', 'UserController@register');
