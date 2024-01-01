@@ -70,6 +70,7 @@ class ArticleController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|min:10|max:255',
             'description' => 'required|min:10|max:255',
+            'image' => 'required|image|mimes:jpg,png,jpeg|max:2048',
             'tag' => 'required|min:3|max:10',
             'topic_id' => 'required',
             'user_id' => 'required'
@@ -82,6 +83,7 @@ class ArticleController extends Controller
         $article = Article::where('id', $id)->first();
         $article->title = $request->get('title');
         $article->description = $request->get('description');
+        $article->image = ImageController::upload($request->get('image'));
         $article->tag = $request->get('tag');
         $article->topic_id = $request->get('topic_id');
         $article->user_id = $request->get('user_id');
