@@ -24,14 +24,19 @@ Route::group(['middleware' => ['jwt.auth','api-header']], function () {
 
     //User routes
     Route::get('user', 'UserController@index');
-    Route::get('user/{user}', 'UserController@show');
-    Route::put('user/{user}','UserController@update')->middleware(['role:admin']);
-    Route::delete('user/{user}', 'UserController@delete')->middleware(['role:admin']);
+    Route::get('user/{id}', 'UserController@show');
+    Route::put('user/{id}','UserController@update')->middleware(['role:admin']);
+    Route::delete('user/{id}', 'UserController@delete')->middleware(['role:admin']);
 
     //Topic routes
     Route::post('topic', 'TopicController@store')->middleware(['role:admin']);
-    Route::put('topic/{topic}', 'TopicController@update')->middleware(['role:admin']);
-    Route::delete('topic/{topic}', 'TopicController@delete')->middleware(['role:admin']);
+    Route::put('topic/{id}', 'TopicController@update')->middleware(['role:admin']);
+    Route::delete('topic/{id}', 'TopicController@delete')->middleware(['role:admin']);
+
+    //Article routes
+    Route::post('article', 'ArticleController@store')->middleware(['role:admin']);
+    Route::put('article/{id}', 'ArticleController@update')->middleware(['role:admin']);
+    Route::delete('article/{id}', 'ArticleController@delete')->middleware(['role:admin']);
 });
 
 Route::group(['middleware' => 'api-header'], function () {
@@ -43,7 +48,11 @@ Route::group(['middleware' => 'api-header'], function () {
 
     //Topic routes
     Route::get('topic', 'TopicController@index');
-    Route::get('topic/{topic}', 'TopicController@show');
+    Route::get('topic/{id}', 'TopicController@show');
+
+    //Article routes
+    Route::get('article', 'ArticleController@index');
+    Route::get('article/{id}', 'ArticleController@show');
 });
 
 
