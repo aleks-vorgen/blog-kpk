@@ -97,8 +97,8 @@ class UserController extends Controller
     }
     public function login(Request $request) {
         $user = User::where('email', $request->email)->get()->first();
-        $role = $user->getRoleNames()[0];
         if ($user && Hash::check($request->password, $user->password)) { // The passwords match...
+            $role = $user->getRoleNames()[0];
             $token = self::getToken($request->email, $request->password);
             $user->auth_token = $token;
             $user->save();
