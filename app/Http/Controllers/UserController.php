@@ -40,17 +40,21 @@ class UserController extends Controller
     public function update(Request $request, $id) {
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:5|max:20',
-            'email' => 'required|email address',
-            'password' => 'required|min:6'
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+            'image' => 'image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['success' => false, 'message' => $validator->errors()]);
+            return response()->json(['success' => false, 'message' => $validator->errors()], 400);
         }
 
         $user = User::where('id', $id)->first();
-        $user->name = $request->get('name');
-        $user->email = $request->get('email');
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->image = $request->hasFile('image') ?
+            ImageController::upload($request->image) : null;
+        $user->password = Hash::make($request->password);
         $user->save();
 
         return response()->json([
