@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -103,9 +104,9 @@ class UserController extends Controller
             ];
         }
         else
-            return response()->json(['success'=>false, 'data'=>'Record doesnt exists'], 401);
+            return response()->json(['success'=>false, 'message'=>'Email or password invalid'], 401);
 
-        return response()->json($response, 201);
+        return response()->json($response);
     }
     public function register(Request $request) {
 
@@ -119,7 +120,7 @@ class UserController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $validator->errors()
-            ]);
+            ], 400);
 
         $payload = [
             'password'=>Hash::make($request->password),
@@ -130,7 +131,8 @@ class UserController extends Controller
 
         $user = new User($payload);
 
-        if ($user->save()) {
+        try {
+            $user->save();
             $token = self::getToken($request->email, $request->password); // generate user token
             if (!is_string($token))
                 return response()->json(['success'=>false,'data'=>'Token generation failed'], 201);
@@ -148,9 +150,13 @@ class UserController extends Controller
                     'auth_token'=>$token
                 ]
             ];
+        } catch (UniqueConstraintViolationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User with this email already exists']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'could not register user']);
         }
-        else
-            $response = ['success'=>false, 'data'=>'Could not register user'];
 
         return response()->json($response, 201);
     }
