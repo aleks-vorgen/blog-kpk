@@ -7,6 +7,7 @@ use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Role;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -15,6 +16,10 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
+        foreach ($users as $user) {
+            $role = User::where('id', $user->id)->first()->getRoleNames()[0];
+            $user->role = $role;
+        }
 
         return response()->json(['data' => $users]);
     }
@@ -27,6 +32,8 @@ class UserController extends Controller
         $user = User::where('id', $id)->first();
 
         if($user) {
+            $role = User::where('id', $id)->first()->getRoleNames()[0];
+            $user->role = $role;
             return response()->json(['data' => $user]);
         }
 
@@ -90,6 +97,7 @@ class UserController extends Controller
     }
     public function login(Request $request) {
         $user = User::where('email', $request->email)->get()->first();
+        $role = $user->getRoleNames()[0];
         if ($user && Hash::check($request->password, $user->password)) { // The passwords match...
             $token = self::getToken($request->email, $request->password);
             $user->auth_token = $token;
@@ -99,7 +107,8 @@ class UserController extends Controller
                 'data'=>['id'=>$user->id,
                     'auth_token'=>$user->auth_token,
                     'name'=>$user->name,
-                    'email'=>$user->email
+                    'email'=>$user->email,
+                    'role' => $role
                 ]
             ];
         }
@@ -147,7 +156,8 @@ class UserController extends Controller
                     'name'=>$user->name,
                     'id'=>$user->id,
                     'email'=>$request->email,
-                    'auth_token'=>$token
+                    'auth_token'=>$token,
+                    'role'=>$user->getRoleNames()[0]
                 ]
             ];
         } catch (UniqueConstraintViolationException $e) {
