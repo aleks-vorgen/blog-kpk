@@ -32,6 +32,8 @@ export default function PostCard({ article, children }) {
             });
     }, []);
 
+    console.log("article", article);
+
     return (
         <Card
             sx={{
@@ -53,7 +55,7 @@ export default function PostCard({ article, children }) {
                 sx={{
                     pt: "56.25%",
                 }}
-                image="https://source.unsplash.com/random?wallpapers"
+                image={`http://127.0.0.1:8000/api/${article.image}`}
             />
             <CardContent sx={{ flexGrow: 1 }}>
                 <Box
