@@ -61,8 +61,8 @@ Route::group(['middleware' => 'api-header'], function () {
 
     //Article routes
     Route::get('article', 'ArticleController@index');
+    Route::get('article/search', 'ArticleController@searchByTitleOrTag');
     Route::get('article/{id}', 'ArticleController@show');
-    Route::get('/article/search/{params}', 'ArticleController@searchByTitleOrTag');
 
     //Comment routes
     Route::get('comment', 'CommentController@index');

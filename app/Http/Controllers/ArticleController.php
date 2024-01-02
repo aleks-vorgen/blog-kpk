@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use Brick\Math\BigInteger;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\ImageController;
+use Psy\Exception\TypeErrorException;
 
 class ArticleController extends Controller
 {
@@ -53,8 +56,8 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id) {
-        $article = Article::where('id', $id)->first();
+    public function show(Request $request) {
+        $article = Article::where('id', $request->id)->first();
 
         if(!$article) {
             return response()->json([
@@ -79,11 +82,11 @@ class ArticleController extends Controller
         return response()->json(['data' => $articles]);
     }
 
-    public function searchByTitleOrTag($title, $tag) {
-        $articles = Article::where('title', 'like', '%'.$title.'%')
-            ->orWhere('tag', 'like', '%'.$tag.'%')->get();
+    public function searchByTitleOrTag(Request $request) {
+        $articles = Article::where('title', 'ilike', '%'.$request->query('title').'%')
+            ->where('tag', 'ilike', '%'.$request->query('tag').'%')->get();
 
-        if (!$articles) {
+        if ($articles->count() == 0) {
             return response()->json(['data' => 'No results']);
         }
 
