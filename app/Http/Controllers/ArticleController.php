@@ -66,6 +66,20 @@ class ArticleController extends Controller
     }
 
     /**
+     * Display a listing of the resource related with user id.
+     */
+    public function showByUser($id) {
+        $articles = Article::where('user_id', $id)->get();
+        if(!$articles) {
+            return response()->json([
+                'message' => 'Not found'
+            ], 404);
+        }
+
+        return response()->json(['data' => $articles]);
+    }
+
+    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id) {

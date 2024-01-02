@@ -34,9 +34,15 @@ Route::group(['middleware' => ['jwt.auth','api-header']], function () {
     Route::delete('topic/{id}', 'TopicController@delete')->middleware(['role:admin']);
 
     //Article routes
-    Route::post('article', 'ArticleController@store')->middleware(['role:admin']);
-    Route::put('article/{id}', 'ArticleController@update')->middleware(['role:admin']);
+    Route::get('article/user/{id}', 'ArticleController@showByUser');
+    Route::post('article', 'ArticleController@store');
+    Route::put('article/{id}', 'ArticleController@update');
     Route::delete('article/{id}', 'ArticleController@delete')->middleware(['role:admin']);
+
+    //Comment routes
+    Route::post('comment', 'CommentController@store');
+    Route::put('comment/{id}', 'CommentController@update');
+    Route::delete('comment/{id}', 'CommentController@delete');
 });
 
 Route::group(['middleware' => 'api-header'], function () {
@@ -56,6 +62,9 @@ Route::group(['middleware' => 'api-header'], function () {
     //Article routes
     Route::get('article', 'ArticleController@index');
     Route::get('article/{id}', 'ArticleController@show');
+
+    //Comment routes
+    Route::get('comment', 'CommentController@index');
 });
 
 
