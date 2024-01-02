@@ -5,7 +5,8 @@ import { Box, Divider, List } from "@mui/material";
 import DeleteModal from "../shared/DeleteModal";
 import CommentCreationForm from "../comment/CommentCreationForm";
 import CommentCard from "../comment/CommentCard";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import UserContext from "../context/UserContext";
 
 const comments = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -13,6 +14,7 @@ export default function PostPage() {
     const [isDeleteCommentModalOpen, setIsDeleteCommentModalOpen] =
         useState(false);
     const [isReplyCommentOpen, setIsReplyCommentOpen] = useState(false);
+    const { user } = useContext(UserContext);
 
     const onDeleteCommentModalOpen = () => {
         setIsDeleteCommentModalOpen(() => true);
@@ -43,7 +45,7 @@ export default function PostPage() {
                     </Box>
                 </Grid>
                 <Grid item xs={8}>
-                    <CommentCreationForm />
+                    {user && <CommentCreationForm />}
                     <List
                         sx={{
                             width: "100%",

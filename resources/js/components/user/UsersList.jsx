@@ -3,19 +3,32 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteModal from "../shared/DeleteModal";
 import CreateEditUserModal from "./CreateEditUserModal";
 import TableCustom from "../shared/TableCustom";
-import { useState } from "react";
-
-const rows = [1, 2, 3, 4, 5];
-
-const rowsHead = ["#", "ID", "Name", "Login", "Password", "Image", "Tools"];
-
-const info = ["Stas", "stas@gmail.com", "12345", "image"];
+import { useEffect, useState } from "react";
+import {
+    deleteUser,
+    editUser,
+    getUser,
+    getUsers,
+} from "../services/UserService";
 
 export default function UsersList() {
+    const [users, setUsers] = useState([]);
+    const [currentUser, setCurrentUser] = useState(null);
     const [isCreationUserModalOpen, setIsCreationUserModalOpen] =
         useState(false);
     const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false);
     const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
+    const [deletedUserId, setDeletedUserId] = useState(null);
+
+    useEffect(() => {
+        getUsers()
+            .then((users) => {
+                setUsers(() => users.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
 
     const onCreationUserModalOpen = () => {
         setIsCreationUserModalOpen(() => true);
@@ -25,7 +38,14 @@ export default function UsersList() {
         setIsCreationUserModalOpen(() => false);
     };
 
-    const onEditUserModalOpen = () => {
+    const onEditUserModalOpen = (userId) => {
+        getUser(userId)
+            .then((user) => {
+                setCurrentUser(() => user.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
         setIsEditUserModalOpen(() => true);
     };
 
@@ -33,7 +53,8 @@ export default function UsersList() {
         setIsEditUserModalOpen(() => false);
     };
 
-    const onDeleteUserModalOpen = () => {
+    const onDeleteUserModalOpen = (userId) => {
+        setDeletedUserId(userId);
         setIsDeleteUserModalOpen(() => true);
     };
 
@@ -41,16 +62,24 @@ export default function UsersList() {
         setIsDeleteUserModalOpen(() => false);
     };
 
+    const onDeleteUser = () => {
+        deleteUser(deletedUserId);
+        setUsers((prev) => prev.filter((item) => item.id !== deletedUserId));
+    };
+
     return (
         <>
-            <TableCustom
-                rows={rows}
-                rowsHead={rowsHead}
-                info={info}
-                onDelete={onDeleteUserModalOpen}
-                onEdit={onEditUserModalOpen}
-            />
-            <Tooltip title="Add new post" placement="top">
+            {users.length ? (
+                <TableCustom
+                    info={users}
+                    onDelete={onDeleteUserModalOpen}
+                    onEdit={onEditUserModalOpen}
+                />
+            ) : (
+                <>empty</>
+            )}
+
+            <Tooltip title="Add new user" placement="top">
                 <Fab
                     color="secondary"
                     sx={{
@@ -66,16 +95,18 @@ export default function UsersList() {
             <CreateEditUserModal
                 open={isCreationUserModalOpen}
                 onClose={onCreationUserModalClose}
+                setItems={setUsers}
             />
             <CreateEditUserModal
                 open={isEditUserModalOpen}
                 onClose={onEditUserModalClose}
-                // user={user}
+                setItems={setUsers}
+                user={currentUser}
             />
             <DeleteModal
                 open={isDeleteUserModalOpen}
                 onClose={onDeleteUserModalClose}
-                // onDelete={onDeleteHandler}
+                onDelete={onDeleteUser}
                 title={`Delete user?`}
                 description={`Do you want to delete this user?`}
             />

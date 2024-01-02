@@ -4,54 +4,35 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { login } from "../../services/UserService";
-import axios from "axios";
+import { useContext, useState } from "react";
+import { Alert } from "@mui/material";
+import UserContext from "../../context/UserContext";
 
-export default function SignIn() {
-    // const handleSubmit = (event) => {
-    //     event.preventDefault();
-    //     const data = new FormData(event.currentTarget);
-    //     console.log({
-    //         email: data.get("email"),
-    //         password: data.get("password"),
-    //     });
-    // };
+export default function SignIn({ onClose }) {
+    const [error, setError] = useState("");
+    const { setUser } = useContext(UserContext);
 
     const onLoginHandler = (event) => {
         event.preventDefault();
-        // const response = await axios.post(
-        //     `http://127.0.0.1:8000/api/user/login?email=sumskoj01@gmail.com&password=asd`
-        // );
-        axios.post('http://127.0.0.1:8000/api/user/login', {
-            email: 'sumskoj01@gmail.com',
-            password: 'asd'
-          })
-          .then(function (response) {
-            console.log(response);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-
-        // const authToken = response.data.auth_token;
-        // localStorage.setItem("access-token", authToken);
+        const data = new FormData(event.currentTarget);
+        const email = data.get("email");
+        const password = data.get("password");
+        login(email, password)
+            .then((resp) => {
+                setUser(resp.data);
+                const authToken = resp.data.auth_token;
+                localStorage.setItem("auth_token", authToken);
+                onClose();
+            })
+            .catch((error) => {
+                console.log("error", error);
+                if (error.response.status === 401) {
+                    setError(() => "Wrong email or password");
+                } else {
+                    setError(() => "Oops, something is wrong");
+                }
+            });
     };
-
-    // const onLoginHandler = (event) => {
-    //     event.preventDefault();
-    //     // try {
-    //     console.log("event.currentTarget", event.currentTarget);
-    //     const data = new FormData(event.currentTarget);
-    //     const response = await login(data.get("email"), data.get("password"));
-    //     localStorage.setItem("access-token", response.data.accessToken);
-    //     // setUser(response.data.user);
-    //     // } catch (error) {
-    //     //     if (error.response.status === 401) {
-    //     //         setError(() => "Wrong email or password");
-    //     //     } else {
-    //     //         setError(() => "Oops, something is wrong");
-    //     //     }
-    //     // }
-    // };
 
     return (
         <Container component="main" maxWidth="xs">
@@ -97,6 +78,7 @@ export default function SignIn() {
                     >
                         Sign In
                     </Button>
+                    {error && <Alert severity="error">{error}</Alert>}
                 </Box>
             </Box>
         </Container>

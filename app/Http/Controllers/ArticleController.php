@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\ImageController;
 
 class ArticleController extends Controller
 {
@@ -34,7 +35,7 @@ class ArticleController extends Controller
             return response()->json(['success' => false, 'message' => $validator->errors()]);
         }
 
-        $image = ImageController::upload($request->get('image'));
+        $image = ImageController::upload($request->file('image')); // Pass the file to the upload method
 
         $article = Article::create([
             'title' => $request->get('title'),
@@ -47,6 +48,7 @@ class ArticleController extends Controller
 
         return response()->json(['success' => true], 201);
     }
+
 
     /**
      * Display the specified resource.

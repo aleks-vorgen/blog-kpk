@@ -10,6 +10,8 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { getTopic } from "../services/TopicService";
+import { useEffect, useState } from "react";
 
 const social = [
     { name: "GitHub", icon: GitHubIcon },
@@ -17,7 +19,19 @@ const social = [
     { name: "Facebook", icon: FacebookIcon },
 ];
 
-export default function PostCard({ children }) {
+export default function PostCard({ article, children }) {
+    const [topic, setTopic] = useState(null);
+
+    useEffect(() => {
+        getTopic(article.topic_id)
+            .then((topic) => {
+                setTopic(() => topic.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
+
     return (
         <Card
             sx={{
@@ -27,10 +41,10 @@ export default function PostCard({ children }) {
             }}
         >
             <CardHeader
-                action={<Chip label="Tag" color="primary" />}
+                action={<Chip label={article.tag} color="primary" />}
                 title={
                     <Typography variant="subtitle1" color="primary">
-                        Topic
+                        {topic?.name}
                     </Typography>
                 }
             />
@@ -54,10 +68,10 @@ export default function PostCard({ children }) {
                     variant="h5"
                     textAlign="center"
                 >
-                    Title
+                    {article.title}
                 </Typography>
                 <Typography variant="subtitle1" paragraph>
-                    Description
+                    {article.description}
                 </Typography>
                 <Box
                     sx={{
@@ -66,7 +80,7 @@ export default function PostCard({ children }) {
                     }}
                 >
                     <Typography variant="subtitle1" color="text.secondary">
-                        Date
+                        {new Date(article.created_at).toLocaleDateString()}
                     </Typography>
                     <Chip icon={<VisibilityIcon />} label="Viewed" />
                 </Box>

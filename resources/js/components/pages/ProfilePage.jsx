@@ -3,19 +3,33 @@ import PostCard from "../post/PostCard";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CreateEditPostModal from "../post/CreateEditPostModal";
 import DeleteModal from "../shared/DeleteModal";
 import UserCard from "../user/UserCard";
 import UserForm from "../user/UserForm";
+import UserContext from "../context/UserContext";
+import { getArticles } from "../services/ArticleService";
 
 const ownPosts = [1, 2, 3, 4, 5];
 
 export default function ProfilePage() {
+    const { user } = useContext(UserContext);
     const [isCreationPostModalOpen, setIsCreationPostModalOpen] =
         useState(false);
     const [isEditPostModalOpen, setIsEditPostModalOpen] = useState(false);
     const [isDeletePostModalOpen, setIsDeletePostModalOpen] = useState(false);
+    const [ownArticles, setOwnArticles] = useState([]);
+
+    useEffect(() => {
+        getArticles()
+            .then((articles) => {
+                setOwnArticles(() => articles.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
 
     const onCreationPostModalOpen = () => {
         setIsCreationPostModalOpen(() => true);
@@ -49,15 +63,15 @@ export default function ProfilePage() {
                 sx={{ py: 2, justifyContent: "center" }}
             >
                 <Grid item xs={4}>
-                    <UserCard />
+                    <UserCard user={user} />
                 </Grid>
                 <Grid item xs={8}>
-                    <UserForm />
+                    <UserForm user={user} />
                 </Grid>
                 <Grid item container xs={12} spacing={4} sx={{ mt: 2 }}>
-                    {ownPosts.map((post) => (
-                        <Grid item xs={4} key={post}>
-                            <PostCard>
+                    {ownArticles.map((article) => (
+                        <Grid item xs={4} key={article}>
+                            <PostCard article={article}>
                                 <Box>
                                     <Tooltip title="Delete" placement="top">
                                         <IconButton

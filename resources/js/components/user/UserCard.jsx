@@ -1,6 +1,6 @@
 import { Card, CardContent, CardMedia, Typography } from "@mui/material";
 
-export default function UserCard() {
+export default function UserCard({ user }) {
     return (
         <Card
             sx={{
@@ -14,8 +14,8 @@ export default function UserCard() {
                 sx={{
                     pt: "56.25%",
                 }}
-                image="https://source.unsplash.com/random?wallpapers"
-                alt="user"
+                src={user?.image}
+                alt={user?.name.charAt(0).toUpperCase()}
             />
             <CardContent>
                 <Typography
@@ -24,10 +24,10 @@ export default function UserCard() {
                     component="div"
                     sx={{ textAlign: "center" }}
                 >
-                    Full name
+                    {user?.name}
                 </Typography>
                 <Typography gutterBottom variant="subtitle1" component="div">
-                    @email
+                    {user?.email}
                 </Typography>
             </CardContent>
         </Card>

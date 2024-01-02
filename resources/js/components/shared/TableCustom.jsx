@@ -9,6 +9,7 @@ import Paper from "@mui/material/Paper";
 import { IconButton, Tooltip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import React from "react";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -29,42 +30,48 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-export default function TableCustom({ rows, rowsHead, info, onDelete, onEdit }) {
+export default function TableCustom({ info, onDelete, onEdit }) {
     return (
         <TableContainer component={Paper} sx={{ mt: 3 }}>
             <Table sx={{ minWidth: 700 }} aria-label="customized table">
                 <TableHead>
                     <TableRow>
-                        {rowsHead.map((cell, index) => (
-                            <StyledTableCell align="left" key={index}>
+                        <StyledTableCell component="th" scope="row">
+                            #
+                        </StyledTableCell>
+                        {Object.keys(info[0]).map((cell, index) => (
+                            <StyledTableCell align="left" key={cell+index}>
                                 {cell}
                             </StyledTableCell>
                         ))}
+                        <StyledTableCell component="th" scope="row">
+                            tools
+                        </StyledTableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map((row) => (
-                        <StyledTableRow key={row}>
+                    {info.map((data, index) => (
+                        <StyledTableRow key={data+index}>
                             <StyledTableCell component="th" scope="row">
-                                {row}
+                                {index + 1}
                             </StyledTableCell>
-                            <StyledTableCell align="left">
-                                {row}
-                            </StyledTableCell>
-                            {info.map((data) => (
-                                <StyledTableCell align="left" key={data}>
-                                    {data}
-                                </StyledTableCell>
+                            {Object.values(data).map((value, index) => (
+                                <React.Fragment key={value+index}>
+                                    <StyledTableCell align="left">
+                                        {value}
+                                    </StyledTableCell>
+                                </React.Fragment>
                             ))}
-
                             <StyledTableCell align="left">
                                 <Tooltip title="Delete" placement="top">
-                                    <IconButton onClick={onDelete}>
+                                    <IconButton
+                                        onClick={() => onDelete(data.id)}
+                                    >
                                         <DeleteIcon color="error" />
                                     </IconButton>
                                 </Tooltip>
                                 <Tooltip title="Edit" placement="top">
-                                    <IconButton onClick={onEdit}>
+                                    <IconButton onClick={() => onEdit(data.id)}>
                                         <EditIcon />
                                     </IconButton>
                                 </Tooltip>

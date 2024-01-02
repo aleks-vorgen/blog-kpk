@@ -1,23 +1,21 @@
 import AppBar from "@mui/material/AppBar";
-import * as React from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import AuthModal from "../authorization/AuthModal";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
 import LogoIcon from "../icons/LogoIcon.png";
+import UserContext from "../context/UserContext";
 
 export default function Header() {
-    const [showAuthModal, setShowAuthModal] = useState(false);
+    const { user, setUser, openAuthModal } = useContext(UserContext);
+    const navigate = useNavigate();
 
-    const openAuthModal = () => {
-        setShowAuthModal(true);
-    };
-
-    const closeAuthModal = () => {
-        setShowAuthModal(false);
+    const handleLogout = () => {
+        localStorage.removeItem("auth_token");
+        setUser(null);
+        navigate("./");
     };
 
     return (
@@ -50,46 +48,64 @@ export default function Header() {
                         </Box>
                     </Typography>
                     <Box>
-                        <Typography
-                            variant="subtitle1"
-                            noWrap
-                            component={Link}
-                            to="/profile"
-                            sx={{
-                                textDecoration: "none",
-                                color: "inherit",
-                                mr: 2,
-                            }}
-                        >
-                            Profile
-                        </Typography>
-                        <Typography
-                            variant="subtitle1"
-                            noWrap
-                            component={Link}
-                            to="/admin"
-                            sx={{
-                                textDecoration: "none",
-                                color: "inherit",
-                                mr: 2,
-                            }}
-                        >
-                            Admin
-                        </Typography>
-                        <Button
-                            variant="outlined"
-                            size="small"
-                            color="inherit"
-                            onClick={openAuthModal}
-                        >
-                            Sign in
-                        </Button>
+                        {user && (
+                            <>
+                                <Typography
+                                    variant="subtitle1"
+                                    noWrap
+                                    component={Link}
+                                    to="/profile"
+                                    sx={{
+                                        textDecoration: "none",
+                                        color: "inherit",
+                                        mr: 2,
+                                    }}
+                                >
+                                    Profile
+                                </Typography>
+                                {user.role === "admin" && (
+                                    <Typography
+                                        variant="subtitle1"
+                                        noWrap
+                                        component={Link}
+                                        to="/admin"
+                                        sx={{
+                                            textDecoration: "none",
+                                            color: "inherit",
+                                            mr: 2,
+                                        }}
+                                    >
+                                        Admin
+                                    </Typography>
+                                )}
+                            </>
+                        )}
+
+                        {user ? (
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                color="inherit"
+                                onClick={handleLogout}
+                            >
+                                Logout
+                            </Button>
+                        ) : (
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                color="inherit"
+                                onClick={openAuthModal}
+                            >
+                                Sign in
+                            </Button>
+                        )}
                     </Box>
                 </Toolbar>
             </AppBar>
-            {showAuthModal && (
+            {/* {showAuthModal && (
                 <AuthModal open={showAuthModal} onClose={closeAuthModal} />
-            )}
+            )} */}
         </>
     );
 }

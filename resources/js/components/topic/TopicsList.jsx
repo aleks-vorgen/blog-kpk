@@ -2,20 +2,28 @@ import { Fab, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import CreateEditTopicModal from "./CreateEditTopicModal";
 import DeleteModal from "../shared/DeleteModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TableCustom from "../shared/TableCustom";
-
-const rows = [1, 2, 3, 4, 5];
-
-const rowsHead = ["#", "ID", "Name", "Tools"];
-
-const info = ["Biathlon"];
+import { deleteTopic, getTopic, getTopics } from "../services/TopicService";
 
 export default function TopicsList() {
+    const [topics, setTopics] = useState([]);
     const [isCreationTopicModalOpen, setIsCreationTopicModalOpen] =
         useState(false);
     const [isEditTopicModalOpen, setIsEditTopicModalOpen] = useState(false);
     const [isDeleteTopicModalOpen, setIsDeleteTopicModalOpen] = useState(false);
+    const [deletedTopicId, setDeletedTopicId] = useState(null);
+    const [currentTopic, setCurrentTopic] = useState(null);
+
+    useEffect(() => {
+        getTopics()
+            .then((topics) => {
+                setTopics(() => topics.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
 
     const onCreationTopicModalOpen = () => {
         setIsCreationTopicModalOpen(() => true);
@@ -25,7 +33,14 @@ export default function TopicsList() {
         setIsCreationTopicModalOpen(() => false);
     };
 
-    const onEditTopicModalOpen = () => {
+    const onEditTopicModalOpen = (topicId) => {
+        getTopic(topicId)
+            .then((topic) => {
+                setCurrentTopic(() => topic.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
         setIsEditTopicModalOpen(() => true);
     };
 
@@ -33,7 +48,8 @@ export default function TopicsList() {
         setIsEditTopicModalOpen(() => false);
     };
 
-    const onDeleteTopicModalOpen = () => {
+    const onDeleteTopicModalOpen = (topicId) => {
+        setDeletedTopicId(topicId);
         setIsDeleteTopicModalOpen(() => true);
     };
 
@@ -41,15 +57,27 @@ export default function TopicsList() {
         setIsDeleteTopicModalOpen(() => false);
     };
 
+    const onDeleteTopic = () => {
+        deleteTopic(deletedTopicId);
+        setTopics((prev) => prev.filter((item) => item.id !== deletedTopicId));
+    };
+
+    const onCreationTopicSuccess = (newTopic) => {
+        setTopics((prev) => prev.concat(newTopic));
+    };
+
     return (
         <>
-            <TableCustom
-                rows={rows}
-                rowsHead={rowsHead}
-                info={info}
-                onDelete={onDeleteTopicModalOpen}
-                onEdit={onEditTopicModalOpen}
-            />
+            {topics.length ? (
+                <TableCustom
+                    info={topics}
+                    onDelete={onDeleteTopicModalOpen}
+                    onEdit={onEditTopicModalOpen}
+                />
+            ) : (
+                <>empty</>
+            )}
+
             <Tooltip title="Add new post" placement="top">
                 <Fab
                     color="secondary"
@@ -66,16 +94,18 @@ export default function TopicsList() {
             <CreateEditTopicModal
                 open={isCreationTopicModalOpen}
                 onClose={onCreationTopicModalClose}
+                onSuccess={onCreationTopicSuccess}
             />
             <CreateEditTopicModal
                 open={isEditTopicModalOpen}
                 onClose={onEditTopicModalClose}
-                // topic={topic}
+                onSuccess={onCreationTopicSuccess}
+                topic={currentTopic}
             />
             <DeleteModal
                 open={isDeleteTopicModalOpen}
                 onClose={onDeleteTopicModalClose}
-                // onDelete={onDeleteHandler}
+                onDelete={onDeleteTopic}
                 title={`Delete topic?`}
                 description={`Do you want to delete this topic?`}
             />

@@ -4,15 +4,31 @@ import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
+import { register } from "../../services/UserService";
+import { useContext, useState } from "react";
+import UserContext from "../../context/UserContext";
+import { Alert } from "@mui/material";
 
-export default function SignUp() {
-    const handleSubmit = (event) => {
+export default function SignUp({ onClose }) {
+    const [error, setError] = useState("");
+    const { setUser } = useContext(UserContext);
+
+    const onRegisterHandler = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get("email"),
-            password: data.get("password"),
-        });
+        const name = data.get("name");
+        const email = data.get("email");
+        const password = data.get("password");
+        register(name, email, password)
+            .then((resp) => {
+                setUser(resp.data);
+                const authToken = resp.data.auth_token;
+                localStorage.setItem("auth_token", authToken);
+                onClose();
+            })
+            .catch((error) => {
+                setError(() => "Oops, something is wrong");
+            });
     };
 
     return (
@@ -28,7 +44,7 @@ export default function SignUp() {
                 <Box
                     component="form"
                     noValidate
-                    onSubmit={handleSubmit}
+                    onSubmit={onRegisterHandler}
                     sx={{ mt: 3 }}
                 >
                     <Grid container spacing={2}>
@@ -41,16 +57,6 @@ export default function SignUp() {
                                 id="name"
                                 label="Full Name"
                                 autoFocus
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                required
-                                fullWidth
-                                name="image"
-                                type="file"
-                                id="image"
-                                autoComplete="image"
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -84,6 +90,7 @@ export default function SignUp() {
                     >
                         Sign Up
                     </Button>
+                    {error && <Alert severity="error">{error}</Alert>}
                 </Box>
             </Box>
         </Container>

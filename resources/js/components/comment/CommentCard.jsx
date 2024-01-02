@@ -9,24 +9,35 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MessageIcon from "@mui/icons-material/Message";
+import { useContext } from "react";
+import UserContext from "../context/UserContext";
 
 export default function CommentCard({ comment, onDelete, onReply }) {
+    const { user } = useContext(UserContext);
     return (
         <ListItem
             alignItems="flex-start"
             secondaryAction={
-                <>
-                    <Tooltip title="Delete" placement="top">
-                        <IconButton aria-label="comment" onClick={onDelete}>
-                            <DeleteIcon color="error" />
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Reply" placement="top">
-                        <IconButton aria-label="comment" onClick={onReply}>
-                            <MessageIcon />
-                        </IconButton>
-                    </Tooltip>
-                </>
+                user && (
+                    <>
+                        {user.role === "admin" && (
+                            <Tooltip title="Delete" placement="top">
+                                <IconButton
+                                    aria-label="comment"
+                                    onClick={onDelete}
+                                >
+                                    <DeleteIcon color="error" />
+                                </IconButton>
+                            </Tooltip>
+                        )}
+
+                        <Tooltip title="Reply" placement="top">
+                            <IconButton aria-label="comment" onClick={onReply}>
+                                <MessageIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </>
+                )
             }
         >
             <ListItemAvatar>

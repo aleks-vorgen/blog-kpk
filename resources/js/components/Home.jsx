@@ -6,12 +6,23 @@ import { Button, Pagination } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import PostCard from "./post/PostCard";
 import Search from "./search/Search";
-import { useState } from "react";
-
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+import { useEffect, useState } from "react";
+import { getArticles } from "./services/ArticleService";
 
 export default function Home() {
     const [page, setPage] = useState(1);
+    const [articles, setArticles] = useState([]);
+
+    useEffect(() => {
+        getArticles()
+            .then((articles) => {
+                console.log("articles", articles);
+                setArticles(() => articles.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
 
     const handleChange = (event, value) => {
         setPage(value);
@@ -57,9 +68,9 @@ export default function Home() {
                     <Search />
                 </Box>
                 <Grid container spacing={4}>
-                    {cards.map((card) => (
-                        <Grid item key={card} xs={12} sm={6} md={4}>
-                            <PostCard>
+                    {articles.map((article) => (
+                        <Grid item key={article} xs={12} sm={6} md={4}>
+                            <PostCard article={article}>
                                 <Button
                                     size="small"
                                     component={RouterLink}

@@ -1,6 +1,6 @@
 import { Box, Button, Grid, TextField } from "@mui/material";
 
-export default function UserForm() {
+export default function UserForm({ user }) {
     return (
         <Box
             component="form"
