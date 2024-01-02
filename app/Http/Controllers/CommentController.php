@@ -58,6 +58,15 @@ class CommentController extends Controller
         return response()->json(['data' => $comment]);
     }
 
+    public function showByArticle($id) {
+        $comments = Comment::where('article_id', $id)->get();
+
+        if ($comments->count() == 0)
+            return response()->json(['data' => 'No comments']);
+
+        return response()->json(['data' => $comments]);
+    }
+
     /**
      * Update the specified resource in storage.
      */

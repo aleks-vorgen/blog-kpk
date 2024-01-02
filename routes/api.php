@@ -66,6 +66,7 @@ Route::group(['middleware' => 'api-header'], function () {
 
     //Comment routes
     Route::get('comment', 'CommentController@index');
+    Route::get('comment/article/{id}', 'CommentController@showByArticle');
 });
 
 
