@@ -16,7 +16,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('text');
 
-            $table->bigInteger('comment_id');
+            $table->bigInteger('comment_id')->nullable();
             $table->bigInteger('user_id');
             $table->bigInteger('article_id');
 
