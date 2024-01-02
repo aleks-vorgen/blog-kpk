@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('text');
-            $table->boolean('delete');
 
             $table->bigInteger('comment_id');
             $table->bigInteger('user_id');
