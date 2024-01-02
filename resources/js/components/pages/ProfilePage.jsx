@@ -9,9 +9,7 @@ import DeleteModal from "../shared/DeleteModal";
 import UserCard from "../user/UserCard";
 import UserForm from "../user/UserForm";
 import UserContext from "../context/UserContext";
-import { getArticles } from "../services/ArticleService";
-
-const ownPosts = [1, 2, 3, 4, 5];
+import { deleteArticle, getArticles } from "../services/ArticleService";
 
 export default function ProfilePage() {
     const { user } = useContext(UserContext);
@@ -20,6 +18,7 @@ export default function ProfilePage() {
     const [isEditPostModalOpen, setIsEditPostModalOpen] = useState(false);
     const [isDeletePostModalOpen, setIsDeletePostModalOpen] = useState(false);
     const [ownArticles, setOwnArticles] = useState([]);
+    const [deletedArticleId, setDeletedArticleId] = useState(null);
 
     useEffect(() => {
         getArticles()
@@ -47,12 +46,20 @@ export default function ProfilePage() {
         setIsEditPostModalOpen(() => false);
     };
 
-    const onDeletePostModalOpen = () => {
+    const onDeletePostModalOpen = (articleId) => {
+        setDeletedArticleId(articleId);
         setIsDeletePostModalOpen(() => true);
     };
 
     const onDeletePostModalClose = () => {
         setIsDeletePostModalOpen(() => false);
+    };
+
+    const onDeletePost = () => {
+        deleteArticle(deletedArticleId);
+        setOwnArticles((prev) =>
+            prev.filter((item) => item.id !== deletedArticleId)
+        );
     };
 
     return (
@@ -69,13 +76,17 @@ export default function ProfilePage() {
                     <UserForm user={user} />
                 </Grid>
                 <Grid item container xs={12} spacing={4} sx={{ mt: 2 }}>
-                    {ownArticles.map((article) => (
-                        <Grid item xs={4} key={article}>
+                    {ownArticles.map((article, index) => (
+                        <Grid item xs={4} key={index}>
                             <PostCard article={article}>
                                 <Box>
                                     <Tooltip title="Delete" placement="top">
                                         <IconButton
-                                            onClick={onDeletePostModalOpen}
+                                            onClick={() =>
+                                                onDeletePostModalOpen(
+                                                    article.id
+                                                )
+                                            }
                                         >
                                             <DeleteIcon color="error" />
                                         </IconButton>
@@ -107,6 +118,7 @@ export default function ProfilePage() {
                     <CreateEditPostModal
                         open={isCreationPostModalOpen}
                         onClose={onCreationPostModalClose}
+                        setOwnArticles={setOwnArticles}
                     />
                     <CreateEditPostModal
                         open={isEditPostModalOpen}
@@ -116,7 +128,7 @@ export default function ProfilePage() {
                     <DeleteModal
                         open={isDeletePostModalOpen}
                         onClose={onDeletePostModalClose}
-                        // onDelete={onDeleteHandler}
+                        onDelete={onDeletePost}
                         title={`Delete post?`}
                         description={`Do you want to delete this post?`}
                     />

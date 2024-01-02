@@ -5,7 +5,7 @@ import { createArticle } from "../services/ArticleService";
 import { getTopics } from "../services/TopicService";
 import UserContext from "../context/UserContext";
 
-export default function CreateEditPost({ open, onClose, article }) {
+export default function CreateEditPost({ open, onClose, setOwnArticles, article }) {
     const [topics, setTopics] = useState([]);
     const [selectedTopic, setSelectedTopic] = useState(null); // Define selectedTopic state
     const [inputValue, setInputValue] = useState("");
@@ -69,6 +69,7 @@ export default function CreateEditPost({ open, onClose, article }) {
 
         try {
             const response = await createArticle(newFormData);
+            setOwnArticles((prev) => prev.concat(response));
             console.log("article", response);
         } catch (error) {
             console.error("Error creating article:", error);
