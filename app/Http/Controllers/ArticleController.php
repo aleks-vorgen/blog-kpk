@@ -26,7 +26,7 @@ class ArticleController extends Controller
             'title' => 'required|min:10|max:255',
             'description' => 'required|min:10|max:255',
             'image' => 'image|mimes:jpg,png,jpeg|max:2048',
-            'tag' => 'required|min:3|max:10',
+            'tag' => 'required|min:2|max:20',
             'topic_id' => 'required',
             'user_id' => 'required'
         ]);
@@ -97,7 +97,7 @@ class ArticleController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|min:10|max:255',
             'description' => 'required|min:10|max:255',
-            'tag' => 'required|min:3|max:10',
+            'tag' => 'required|min:2|max:20',
             'topic_id' => 'required',
             'user_id' => 'required'
         ]);
