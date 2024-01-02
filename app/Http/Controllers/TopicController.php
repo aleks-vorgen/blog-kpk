@@ -28,7 +28,7 @@ class TopicController extends Controller
         }
 
         $topic = Topic::create([
-            'name' => $request->get('name')
+            'name' => $request->name
         ]);
 
         return response()->json(['success' => true, 'data' => $topic], 201);
@@ -54,7 +54,7 @@ class TopicController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id) {
-        $validator = Topic::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'name' => 'required|min:5',
         ]);
 
@@ -63,7 +63,7 @@ class TopicController extends Controller
         }
 
         $topic = Topic::where('id', $id)->first();
-        $topic->name = $request->get('name');;
+        $topic->name = $request->name;
         $topic->save();
 
         return response()->json([
