@@ -6,9 +6,14 @@ export const getTopics = async () => {
         .then((response) => response.data);
 };
 
-export const updateTopic = async (topicId, topic) => {
+// export const editUser = async (userId, name, email) => {
+//     return await protectedAxiosInstance
+//         .post(`user/${userId}`,  {_method: "PUT", name, email,})
+//         .then((response) => response.data);
+
+export const updateTopic = async (topicId, name) => {
     return await protectedAxiosInstance
-        .put(`topic/${topicId}`, topic)
+        .post(`topic/${topicId}`, {_method: "PUT", name })
         .then((response) => response.data);
 };
 

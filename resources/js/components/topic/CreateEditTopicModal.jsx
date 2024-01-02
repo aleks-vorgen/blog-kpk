@@ -5,30 +5,32 @@ import { useEffect, useState } from "react";
 
 export default function CreateEditTopic({ open, onClose, onSuccess, topic }) {
     const [formData, setFormData] = useState({
-        title: topic?.name || "",
+        name: topic?.name || "",
     });
 
     useEffect(() => {
         setFormData({
-            title: topic?.name || "",
+            name: topic?.name || "",
         });
     }, [topic]);
 
     const onCreateEditTopic = (event) => {
         event.preventDefault();
-        const { title } = formData;
+        const { name } = formData;
 
         if (topic) {
-            topic.name = title;
-            updateTopic(topic.id, topic)
-                .then(() => {
-                    console.log("success");
+            updateTopic(topic.id, name)
+                .then((resp) => {
+                    console.log("resp", resp);
                 })
                 .catch((error) => {
                     console.log(error);
                 });
         } else {
-            createTopic(title).then((topic) => console.log("topic", topic),onSuccess(topic));
+            createTopic(name).then(
+                (topic) => console.log("topic", topic),
+                onSuccess(topic)
+            );
         }
         onClose();
     };
@@ -42,7 +44,7 @@ export default function CreateEditTopic({ open, onClose, onSuccess, topic }) {
     };
 
     return (
-        <ModalCustom title="Create new topic" open={open} onClose={onClose}>
+        <ModalCustom name="Create new topic" open={open} onClose={onClose}>
             <Box
                 component="form"
                 onSubmit={onCreateEditTopic}
@@ -53,11 +55,11 @@ export default function CreateEditTopic({ open, onClose, onSuccess, topic }) {
                     margin="normal"
                     required
                     fullWidth
-                    id="title"
-                    label="Title"
-                    name="title"
-                    autoComplete="title"
-                    value={formData.title}
+                    id="name"
+                    label="name"
+                    name="name"
+                    autoComplete="name"
+                    value={formData.name}
                     onChange={handleInputChange}
                 />
                 <Button

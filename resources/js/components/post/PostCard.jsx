@@ -23,7 +23,7 @@ export default function PostCard({ article, children }) {
     const [topic, setTopic] = useState(null);
 
     useEffect(() => {
-        getTopic(article.topic_id)
+        getTopic(article?.topic_id)
             .then((topic) => {
                 setTopic(() => topic.data);
             })
@@ -31,8 +31,6 @@ export default function PostCard({ article, children }) {
                 console.log(error);
             });
     }, []);
-
-    console.log("article", article);
 
     return (
         <Card
@@ -43,7 +41,7 @@ export default function PostCard({ article, children }) {
             }}
         >
             <CardHeader
-                action={<Chip label={article.tag} color="primary" />}
+                action={<Chip label={article?.tag} color="primary" />}
                 title={
                     <Typography variant="subtitle1" color="primary">
                         {topic?.name}
@@ -55,7 +53,7 @@ export default function PostCard({ article, children }) {
                 sx={{
                     pt: "56.25%",
                 }}
-                image={`http://127.0.0.1:8000/api/${article.image}`}
+                image={`http://127.0.0.1:8000/api/${article?.image}`}
             />
             <CardContent sx={{ flexGrow: 1 }}>
                 <Box
@@ -70,10 +68,10 @@ export default function PostCard({ article, children }) {
                     variant="h5"
                     textAlign="center"
                 >
-                    {article.title}
+                    {article?.title}
                 </Typography>
                 <Typography variant="subtitle1" paragraph>
-                    {article.description}
+                    {article?.description}
                 </Typography>
                 <Box
                     sx={{
@@ -82,7 +80,7 @@ export default function PostCard({ article, children }) {
                     }}
                 >
                     <Typography variant="subtitle1" color="text.secondary">
-                        {new Date(article.created_at).toLocaleDateString()}
+                        {new Date(article?.created_at).toLocaleDateString()}
                     </Typography>
                     <Chip icon={<VisibilityIcon />} label="Viewed" />
                 </Box>

@@ -9,7 +9,11 @@ import DeleteModal from "../shared/DeleteModal";
 import UserCard from "../user/UserCard";
 import UserForm from "../user/UserForm";
 import UserContext from "../context/UserContext";
-import { deleteArticle, getArticles } from "../services/ArticleService";
+import {
+    deleteArticle,
+    getArticle,
+    getArticles,
+} from "../services/ArticleService";
 
 export default function ProfilePage() {
     const { user } = useContext(UserContext);
@@ -19,6 +23,7 @@ export default function ProfilePage() {
     const [isDeletePostModalOpen, setIsDeletePostModalOpen] = useState(false);
     const [ownArticles, setOwnArticles] = useState([]);
     const [deletedArticleId, setDeletedArticleId] = useState(null);
+    const [currentArticle, setCurrentArticle] = useState(null);
 
     useEffect(() => {
         getArticles()
@@ -38,7 +43,14 @@ export default function ProfilePage() {
         setIsCreationPostModalOpen(() => false);
     };
 
-    const onEditPostModalOpen = () => {
+    const onEditPostModalOpen = (articleId) => {
+        getArticle(articleId)
+            .then((article) => {
+                setCurrentArticle(() => article.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
         setIsEditPostModalOpen(() => true);
     };
 
@@ -93,7 +105,9 @@ export default function ProfilePage() {
                                     </Tooltip>
                                     <Tooltip title="Edit" placement="top">
                                         <IconButton
-                                            onClick={onEditPostModalOpen}
+                                            onClick={() =>
+                                                onEditPostModalOpen(article.id)
+                                            }
                                         >
                                             <EditIcon />
                                         </IconButton>
@@ -123,7 +137,8 @@ export default function ProfilePage() {
                     <CreateEditPostModal
                         open={isEditPostModalOpen}
                         onClose={onEditPostModalClose}
-                        // post={post}
+                        setOwnArticles={setOwnArticles}
+                        article={currentArticle}
                     />
                     <DeleteModal
                         open={isDeletePostModalOpen}

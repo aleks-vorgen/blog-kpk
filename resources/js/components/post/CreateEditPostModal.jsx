@@ -1,13 +1,20 @@
 import { Autocomplete, Box, Button, TextField } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import ModalCustom from "../shared/ModalCustom";
-import { createArticle } from "../services/ArticleService";
-import { getTopics } from "../services/TopicService";
+import { createArticle, updateArticle } from "../services/ArticleService";
+import { getTopic, getTopics } from "../services/TopicService";
 import UserContext from "../context/UserContext";
+import axios from 'axios';
 
-export default function CreateEditPost({ open, onClose, setOwnArticles, article }) {
+export default function CreateEditPost({
+    open,
+    onClose,
+    setOwnArticles,
+    article,
+}) {
     const [topics, setTopics] = useState([]);
-    const [selectedTopic, setSelectedTopic] = useState(null); // Define selectedTopic state
+    const [selectedTopic, setSelectedTopic] = useState(null);
+    const [articleTopic, setArticleTopic] = useState(null);
     const [inputValue, setInputValue] = useState("");
     const { user } = useContext(UserContext);
 
@@ -16,6 +23,8 @@ export default function CreateEditPost({ open, onClose, setOwnArticles, article 
         description: article?.description || "",
         tag: article?.tag || "",
         image: article?.image || null,
+        topic_id: article?.topic_id || null,
+        user_id: user?.id, // Add user_id to formData
     });
 
     useEffect(() => {
@@ -32,14 +41,23 @@ export default function CreateEditPost({ open, onClose, setOwnArticles, article 
             description: article?.description || "",
             tag: article?.tag || "",
             image: article?.image || null,
+            topic_id: article?.topic_id || null,
+            user_id: user?.id,
         });
-    }, [article]);
+
+        getTopic(article?.topic_id)
+            .then((topic) => {
+                setArticleTopic(() => topic.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, [article, user?.id]);
 
     const handleInputChange = (event) => {
         const { name, value, files } = event.target;
 
         if (name === "image" && files.length) {
-            // Handle file input separately
             const imageFile = files[0];
             setFormData((prevData) => ({
                 ...prevData,
@@ -56,23 +74,43 @@ export default function CreateEditPost({ open, onClose, setOwnArticles, article 
     const onCreateEditPost = async (event) => {
         event.preventDefault();
 
+        // Check for required fields
+        if (
+            !formData.title ||
+            !formData.description ||
+            !formData.tag ||
+            !formData.topic_id ||
+            !formData?.user_id
+        ) {
+            console.error("Required fields are missing");
+            return;
+        }
+
         const newFormData = new FormData();
         newFormData.append("title", formData.title);
         newFormData.append("description", formData.description);
         newFormData.append("tag", formData.tag);
-        newFormData.append("topic_id", selectedTopic ? selectedTopic.id : null);
-        newFormData.append("user_id", user.id);
+        newFormData.append("topic_id", formData.topic_id);
+        newFormData.append("user_id", formData?.user_id);
 
+        // Add other fields like image if needed
         if (formData.image) {
             newFormData.append("image", formData.image);
         }
 
         try {
-            const response = await createArticle(newFormData);
-            setOwnArticles((prev) => prev.concat(response));
-            console.log("article", response);
+            if (article) {
+                // Update existing article
+                const response = await updateArticle(article.id, newFormData);
+                console.log("Updated article:", response);
+            } else {
+                // Create a new article
+                const response = await createArticle(newFormData);
+                setOwnArticles((prev) => prev.concat(response));
+                console.log("Created article:", response);
+            }
         } catch (error) {
-            console.error("Error creating article:", error);
+            console.error("Error creating/updating article:", error);
         }
 
         onClose();
@@ -95,6 +133,7 @@ export default function CreateEditPost({ open, onClose, setOwnArticles, article 
                     name="title"
                     autoComplete="title"
                     autoFocus
+                    value={formData.title}
                     onChange={handleInputChange}
                 />
                 <TextField
@@ -105,6 +144,7 @@ export default function CreateEditPost({ open, onClose, setOwnArticles, article 
                     label="Description"
                     name="description"
                     autoComplete="description"
+                    value={formData.description}
                     onChange={handleInputChange}
                 />
                 <TextField
@@ -115,6 +155,7 @@ export default function CreateEditPost({ open, onClose, setOwnArticles, article 
                     label="Tag"
                     name="tag"
                     autoComplete="tag"
+                    value={formData.tag}
                     onChange={handleInputChange}
                 />
                 <TextField
@@ -125,13 +166,20 @@ export default function CreateEditPost({ open, onClose, setOwnArticles, article 
                     type="file"
                     id="image"
                     autoComplete="image"
+                    // value={formData.image}
                     onChange={handleInputChange}
                 />
+
                 <Autocomplete
                     fullWidth
-                    value={selectedTopic}
+                    value={selectedTopic ? selectedTopic : articleTopic}
                     onChange={(event, newValue) => {
                         setSelectedTopic(newValue);
+                        // Set topic_id in formData when selecting a topic
+                        setFormData((prevData) => ({
+                            ...prevData,
+                            topic_id: newValue ? newValue.id : null,
+                        }));
                     }}
                     inputValue={inputValue}
                     onInputChange={(event, newInputValue) => {

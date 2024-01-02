@@ -4,7 +4,12 @@ import CreateEditTopicModal from "./CreateEditTopicModal";
 import DeleteModal from "../shared/DeleteModal";
 import { useEffect, useState } from "react";
 import TableCustom from "../shared/TableCustom";
-import { deleteTopic, getTopic, getTopics } from "../services/TopicService";
+import {
+    deleteTopic,
+    getTopic,
+    getTopics,
+    createTopic,
+} from "../services/TopicService";
 
 export default function TopicsList() {
     const [topics, setTopics] = useState([]);
@@ -18,7 +23,7 @@ export default function TopicsList() {
     useEffect(() => {
         getTopics()
             .then((topics) => {
-                setTopics(() => topics.data);
+                setTopics(topics.data);
             })
             .catch((error) => {
                 console.log(error);
@@ -26,35 +31,52 @@ export default function TopicsList() {
     }, []);
 
     const onCreationTopicModalOpen = () => {
-        setIsCreationTopicModalOpen(() => true);
+        setIsCreationTopicModalOpen(true);
     };
 
     const onCreationTopicModalClose = () => {
-        setIsCreationTopicModalOpen(() => false);
+        setIsCreationTopicModalOpen(false);
     };
 
     const onEditTopicModalOpen = (topicId) => {
         getTopic(topicId)
             .then((topic) => {
-                setCurrentTopic(() => topic.data);
+                setCurrentTopic(topic.data);
             })
             .catch((error) => {
                 console.log(error);
             });
-        setIsEditTopicModalOpen(() => true);
+        setIsEditTopicModalOpen(true);
     };
 
-    const onEditTopicModalClose = () => {
-        setIsEditTopicModalOpen(() => false);
+    const onEditTopicModalClose = async () => {
+        setIsEditTopicModalOpen(false);
+
+        if (currentTopic) {
+            try {
+                const updatedTopic = await getTopic(currentTopic.id);
+                setTopics((prev) =>
+                    prev.map((item) =>
+                        item.id !== updatedTopic.data.id
+                            ? item
+                            : updatedTopic.data
+                    )
+                );
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        setCurrentTopic(null);
     };
 
     const onDeleteTopicModalOpen = (topicId) => {
         setDeletedTopicId(topicId);
-        setIsDeleteTopicModalOpen(() => true);
+        setIsDeleteTopicModalOpen(true);
     };
 
     const onDeleteTopicModalClose = () => {
-        setIsDeleteTopicModalOpen(() => false);
+        setIsDeleteTopicModalOpen(false);
     };
 
     const onDeleteTopic = () => {
@@ -62,8 +84,13 @@ export default function TopicsList() {
         setTopics((prev) => prev.filter((item) => item.id !== deletedTopicId));
     };
 
-    const onCreationTopicSuccess = (newTopic) => {
-        setTopics((prev) => prev.concat(newTopic));
+    const onCreationTopicSuccess = async (newTopic) => {
+        try {
+            const updatedTopics = await getTopics();
+            setTopics(updatedTopics.data);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
