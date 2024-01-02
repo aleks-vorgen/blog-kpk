@@ -33,15 +33,18 @@ export const getUser = async (userId) => {
         .then((response) => response.data);
 };
 
-// export const createUser = async (user) => {
-//     return await protectedAxiosInstance
-//         .put(`user/${userId}`, user)
-//         .then((response) => response.data);
-// };
-
 export const editUser = async (userId, user) => {
+    const formData = new FormData();
+    formData.append("_method", "PUT");
+    formData.append("name", user.get("name"));
+    formData.append("email", user.get("email"));
+
+    if (user.get("image")) {
+        formData.append("image", user.get("image"));
+    }
+
     return await protectedAxiosInstance
-        .post(`user/${userId}`,  {_method: "PUT", user,})
+        .post(`user/${userId}`, formData)
         .then((response) => response.data);
 };
 

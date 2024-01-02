@@ -24,7 +24,7 @@ export default function CreateEditUserModal({ open, onClose, user }) {
 
         if (user.id) {
             const id = user.id;
-            editUser(id, { name, email });
+            editUser(id, name, email);
         } else {
             console.log("create user");
         }

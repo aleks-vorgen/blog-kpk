@@ -1,11 +1,50 @@
 import { Box, Button, Grid, TextField } from "@mui/material";
+import { editUser } from "../services/UserService";
+import { useEffect, useState } from "react";
 
 export default function UserForm({ user }) {
+    const [formData, setFormData] = useState({
+        name: user?.name,
+        email: user?.email,
+        image: user?.image,
+    });
+
+    useEffect(() => {
+        setFormData({
+            name: user?.name,
+            email: user?.email,
+            image: user?.image,
+        });
+    }, [user]);
+
+    const onUpdateUser = (event) => {
+        event.preventDefault();
+        const id = user.id;
+
+        const newFormData = new FormData();
+        newFormData.append("name", formData.name);
+        newFormData.append("email", formData.email);
+
+        if (formData.image) {
+            newFormData.append("image", formData.image);
+        }
+
+        editUser(id, newFormData);
+    };
+
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
+
     return (
         <Box
             component="form"
             noValidate
-            // onSubmit={handleSubmit}
+            onSubmit={onUpdateUser}
             sx={{
                 mt: 3,
                 display: "flex",
@@ -22,8 +61,9 @@ export default function UserForm({ user }) {
                         required
                         fullWidth
                         id="name"
-                        label="Full Name"
                         autoFocus
+                        value={formData.name}
+                        onChange={handleInputChange}
                     />
                 </Grid>
                 <Grid item xs={12}>
@@ -31,9 +71,10 @@ export default function UserForm({ user }) {
                         required
                         fullWidth
                         id="email"
-                        label="Email Address"
                         name="email"
                         autoComplete="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
                     />
                 </Grid>
                 <Grid item xs={12}>
@@ -44,6 +85,7 @@ export default function UserForm({ user }) {
                         type="file"
                         id="image"
                         autoComplete="image"
+                        onChange={handleInputChange}
                     />
                 </Grid>
             </Grid>

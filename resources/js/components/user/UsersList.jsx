@@ -1,12 +1,9 @@
-import { Fab, Tooltip } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import DeleteModal from "../shared/DeleteModal";
 import CreateEditUserModal from "./CreateEditUserModal";
 import TableCustom from "../shared/TableCustom";
 import { useEffect, useState } from "react";
 import {
     deleteUser,
-    editUser,
     getUser,
     getUsers,
 } from "../services/UserService";
@@ -23,43 +20,56 @@ export default function UsersList() {
     useEffect(() => {
         getUsers()
             .then((users) => {
-                setUsers(() => users.data);
+                setUsers(users.data);
             })
             .catch((error) => {
                 console.log(error);
             });
     }, []);
 
-    const onCreationUserModalOpen = () => {
-        setIsCreationUserModalOpen(() => true);
-    };
-
     const onCreationUserModalClose = () => {
-        setIsCreationUserModalOpen(() => false);
+        setIsCreationUserModalOpen(false);
     };
 
     const onEditUserModalOpen = (userId) => {
         getUser(userId)
             .then((user) => {
-                setCurrentUser(() => user.data);
+                setCurrentUser(user.data);
             })
             .catch((error) => {
                 console.log(error);
             });
-        setIsEditUserModalOpen(() => true);
+        setIsEditUserModalOpen(true);
     };
 
-    const onEditUserModalClose = () => {
-        setIsEditUserModalOpen(() => false);
+    const onEditUserModalClose = async () => {
+        setIsEditUserModalOpen(false);
+
+        if (currentUser) {
+            try {
+                const updatedUser = await getUser(currentUser.id);
+                setUsers((prev) =>
+                    prev.map((item) =>
+                        item.id !== updatedUser.data.id
+                            ? item
+                            : updatedUser.data
+                    )
+                );
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        setCurrentUser(null);
     };
 
     const onDeleteUserModalOpen = (userId) => {
         setDeletedUserId(userId);
-        setIsDeleteUserModalOpen(() => true);
+        setIsDeleteUserModalOpen(true);
     };
 
     const onDeleteUserModalClose = () => {
-        setIsDeleteUserModalOpen(() => false);
+        setIsDeleteUserModalOpen(false);
     };
 
     const onDeleteUser = () => {
@@ -78,20 +88,6 @@ export default function UsersList() {
             ) : (
                 <>empty</>
             )}
-
-            <Tooltip title="Add new user" placement="top">
-                <Fab
-                    color="secondary"
-                    sx={{
-                        position: "fixed",
-                        bottom: 30,
-                        right: 30,
-                    }}
-                    onClick={onCreationUserModalOpen}
-                >
-                    <AddIcon />
-                </Fab>
-            </Tooltip>
             <CreateEditUserModal
                 open={isCreationUserModalOpen}
                 onClose={onCreationUserModalClose}
