@@ -25,7 +25,7 @@ Route::group(['middleware' => ['jwt.auth','api-header']], function () {
     //User routes
     Route::get('user', 'UserController@index');
     Route::get('user/{id}', 'UserController@show');
-    Route::put('user/{id}','UserController@update')->middleware(['role:admin']);
+    Route::put('user/{id}','UserController@update');
     Route::delete('user/{id}', 'UserController@delete')->middleware(['role:admin']);
 
     //Topic routes
@@ -62,6 +62,7 @@ Route::group(['middleware' => 'api-header'], function () {
     //Article routes
     Route::get('article', 'ArticleController@index');
     Route::get('article/{id}', 'ArticleController@show');
+    Route::get('/article/search/{params}', 'ArticleController@searchByTitleOrTag');
 
     //Comment routes
     Route::get('comment', 'CommentController@index');
