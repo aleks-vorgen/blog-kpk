@@ -79,6 +79,17 @@ class ArticleController extends Controller
         return response()->json(['data' => $articles]);
     }
 
+    public function searchByTitleOrTag($title, $tag) {
+        $articles = Article::where('title', 'like', '%'.$title.'%')
+            ->orWhere('tag', 'like', '%'.$tag.'%')->get();
+
+        if (!$articles) {
+            return response()->json(['data' => 'No results']);
+        }
+
+        return response()->json(['data' => $articles]);
+    }
+
     /**
      * Update the specified resource in storage.
      */
@@ -86,7 +97,6 @@ class ArticleController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|min:10|max:255',
             'description' => 'required|min:10|max:255',
-            'image' => 'image|mimes:jpg,png,jpeg|max:2048',
             'tag' => 'required|min:3|max:10',
             'topic_id' => 'required',
             'user_id' => 'required'
@@ -99,7 +109,7 @@ class ArticleController extends Controller
         $article = Article::where('id', $id)->first();
         $article->title = $request->title;
         $article->description = $request->description;
-        if ($article->image != null)
+        if ($article->image != null && is_file($article->image))
             $article->image = ImageController::upload($request->image);
         $article->tag = $request->tag;
         $article->topic_id = $request->topic_id;
