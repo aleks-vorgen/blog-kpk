@@ -20,7 +20,7 @@ class TopicController extends Controller
      */
     public function store(Request $request) {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|min:5|max:20'
+            'name' => 'required|min:3|max:20'
         ]);
 
         if ($validator->fails()) {
