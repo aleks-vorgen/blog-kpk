@@ -62,7 +62,7 @@ class CommentController extends Controller
         $comments = Comment::where('article_id', $id)->get();
 
         if ($comments->count() == 0)
-            return response()->json(['data' => 'No comments']);
+            return response()->json(['data' => 'No comments'], 404);
 
         return response()->json(['data' => $comments]);
     }
