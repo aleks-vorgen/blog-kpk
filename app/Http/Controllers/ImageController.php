@@ -21,7 +21,6 @@ class ImageController extends Controller
     }
 
     public function download($fileName) {
-        $path = url('image/'.$fileName);
         $filePath = storage_path('/app/public/image/'.$fileName);
         return response()->file($filePath);
     }

@@ -25,7 +25,7 @@ class ArticleController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|min:10|max:255',
             'description' => 'required|min:10|max:255',
-            'image' => 'required|image|mimes:jpg,png,jpeg|max:2048',
+            'image' => 'image|mimes:jpg,png,jpeg|max:2048',
             'tag' => 'required|min:3|max:10',
             'topic_id' => 'required',
             'user_id' => 'required'
@@ -38,15 +38,15 @@ class ArticleController extends Controller
         $image = ImageController::upload($request->file('image')); // Pass the file to the upload method
 
         $article = Article::create([
-            'title' => $request->get('title'),
-            'description' => $request->get('description'),
+            'title' => $request->title,
+            'description' => $request->description,
             'image' => $image,
-            'tag' => $request->get('tag'),
-            'topic_id' => $request->get('topic_id'),
-            'user_id' => $request->get('user_id')
+            'tag' => $request->tag,
+            'topic_id' => $request->topic_id,
+            'user_id' => $request->user_id
         ]);
 
-        return response()->json(['success' => true], 201);
+        return response()->json(['success' => true, 'data' => $article], 201);
     }
 
 
@@ -72,7 +72,7 @@ class ArticleController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|min:10|max:255',
             'description' => 'required|min:10|max:255',
-            'image' => 'required|image|mimes:jpg,png,jpeg|max:2048',
+            'image' => 'image|mimes:jpg,png,jpeg|max:2048',
             'tag' => 'required|min:3|max:10',
             'topic_id' => 'required',
             'user_id' => 'required'
@@ -83,17 +83,18 @@ class ArticleController extends Controller
         }
 
         $article = Article::where('id', $id)->first();
-        $article->title = $request->get('title');
-        $article->description = $request->get('description');
-        $article->image = ImageController::upload($request->get('image'));
-        $article->tag = $request->get('tag');
-        $article->topic_id = $request->get('topic_id');
-        $article->user_id = $request->get('user_id');
+        $article->title = $request->title;
+        $article->description = $request->description;
+        if ($article->image != null)
+            $article->image = ImageController::upload($request->image);
+        $article->tag = $request->tag;
+        $article->topic_id = $request->topic_id;
+        $article->user_id = $request->user_id;
         $article->save();
 
         return response()->json([
             'success' => true,
-            'message' => 'Topic has been updated'
+            'data' => $article
         ]);
     }
 

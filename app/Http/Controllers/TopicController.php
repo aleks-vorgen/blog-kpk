@@ -31,7 +31,7 @@ class TopicController extends Controller
             'name' => $request->get('name')
         ]);
 
-        return response()->json(['success' => true], 201);
+        return response()->json(['success' => true, 'data' => $topic], 201);
     }
 
     /**
@@ -68,7 +68,7 @@ class TopicController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Topic has been updated'
+            'data' => $topic
         ]);
     }
 
