@@ -49,7 +49,6 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:4|max:20',
             'email' => 'required|email',
-            'image' => 'image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -58,9 +57,10 @@ class UserController extends Controller
         $user = User::where('id', $id)->first();
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->image = $request->hasFile('image') ?
-            ImageController::upload($request->image) : null;
-        //$user->password = Hash::make($request->password);
+        if ($request->hasFile('image')) {
+            ImageController::delete($user->image);
+            $user->image = ImageController::upload($request->image);
+        }
         $user->save();
 
         return response()->json([

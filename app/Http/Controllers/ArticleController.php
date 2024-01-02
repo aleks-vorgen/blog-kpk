@@ -112,8 +112,10 @@ class ArticleController extends Controller
         $article = Article::where('id', $id)->first();
         $article->title = $request->title;
         $article->description = $request->description;
-        if ($request->image != null && is_file($request->image))
+        if ($request->hasFile('image')) {
+            ImageController::delete($article->image);
             $article->image = ImageController::upload($request->image);
+        }
         $article->tag = $request->tag;
         $article->topic_id = $request->topic_id;
         $article->user_id = $request->user_id;
