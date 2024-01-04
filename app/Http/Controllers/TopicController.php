@@ -13,7 +13,9 @@ class TopicController extends Controller {
 
         return response()->json(['data' => $topics]);
     }
-
+    /**
+     * Store a newly created resource in storage.
+     */
 
     public function store(Request $request) {
         $validator = Validator::make($request->all(), [
