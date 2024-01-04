@@ -6,11 +6,8 @@ use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class CommentController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     */
+class CommentController extends Controller {
+
     public function index()
     {
         $comments = Comment::all();
