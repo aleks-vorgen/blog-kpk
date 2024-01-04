@@ -22,7 +22,7 @@ class UserController extends Controller {
 
         return response()->json(['data' => $users]);
     }
-
+// i
 
     public function show($id)
     {
