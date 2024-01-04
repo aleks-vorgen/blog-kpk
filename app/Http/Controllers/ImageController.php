@@ -7,13 +7,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 
-class ImageController extends Controller
-{
-    // public static function upload($request) {
-    //     $image_path = $request->store('image', 'public');
-
-    //     return $image_path;
-    // }
+class ImageController extends Controller {
 
     public static function upload(UploadedFile $file) {
         $image_path = $file->store('image', 'public');
