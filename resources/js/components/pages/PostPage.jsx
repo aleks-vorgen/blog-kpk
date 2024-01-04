@@ -5,18 +5,62 @@ import { Box, Divider, List } from "@mui/material";
 import DeleteModal from "../shared/DeleteModal";
 import CommentCreationForm from "../comment/CommentCreationForm";
 import CommentCard from "../comment/CommentCard";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import UserContext from "../context/UserContext";
-
-const comments = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+import { useParams } from "react-router-dom";
+import { getArticle } from "../services/ArticleService";
+import {
+    createComment,
+    deleteComment,
+    getCommentsByArticle,
+} from "../services/CommentService";
 
 export default function PostPage() {
     const [isDeleteCommentModalOpen, setIsDeleteCommentModalOpen] =
         useState(false);
     const [isReplyCommentOpen, setIsReplyCommentOpen] = useState(false);
+    const [article, setArticle] = useState(null);
+    const [comments, setComments] = useState([]);
     const { user } = useContext(UserContext);
+    const { postId } = useParams();
+    const [deletedCommentId, setDeletedCommentId] = useState(null);
+    const [replyingCommentId, setReplyingCommentId] = useState(null);
 
-    const onDeleteCommentModalOpen = () => {
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const articleResponse = await getArticle(postId);
+                setArticle(articleResponse.data);
+
+                const commentsResponse = await getCommentsByArticle(
+                    articleResponse.data.id
+                );
+                setComments(commentsResponse.data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        fetchData();
+    }, [postId]);
+
+    const onCommentCreated = async (comment) => {
+        try {
+            const commentResponse = await createComment(comment);
+            console.log("commentResponse", commentResponse);
+            setComments((prevComments) => [
+                ...prevComments,
+                commentResponse.data,
+            ]);
+        } catch (error) {
+            console.error("Error creating comment:", error);
+        }
+    };
+
+    console.log("comments", comments);
+
+    const onDeleteCommentModalOpen = (commentId) => {
+        setDeletedCommentId(commentId);
         setIsDeleteCommentModalOpen(() => true);
     };
 
@@ -24,12 +68,20 @@ export default function PostPage() {
         setIsDeleteCommentModalOpen(() => false);
     };
 
-    const onReplyCommentOpen = () => {
-        setIsReplyCommentOpen(() => true);
+    const onReplyCommentOpen = (commentId) => {
+        setIsReplyCommentOpen(true);
+        setReplyingCommentId(commentId);
     };
 
     const onReplyCommentClose = () => {
         setIsReplyCommentOpen(() => false);
+    };
+
+    const onDeleteComment = () => {
+        deleteComment(deletedCommentId);
+        setComments((prev) =>
+            prev.filter((item) => item.id !== deletedCommentId)
+        );
     };
 
     return (
@@ -41,39 +93,63 @@ export default function PostPage() {
             >
                 <Grid item xs={4}>
                     <Box>
-                        <PostCard />
+                        <PostCard article={article} />
                     </Box>
                 </Grid>
                 <Grid item xs={8}>
-                    {user && <CommentCreationForm />}
+                    {user && (
+                        <CommentCreationForm
+                            article={article}
+                            onCommentCreated={onCommentCreated}
+                        />
+                    )}
                     <List
                         sx={{
                             width: "100%",
                             mt: 2,
                         }}
                     >
-                        {comments.map((comment) => (
-                            <React.Fragment key={comment}>
-                                <CommentCard
-                                    comment={comment}
-                                    onDelete={onDeleteCommentModalOpen}
-                                    onReply={onReplyCommentOpen}
-                                />
-                                {isReplyCommentOpen && (
-                                    <Box sx={{ ml: 9, mb: 2 }}>
-                                        <CommentCreationForm
-                                            onClose={onReplyCommentClose}
-                                        />
-                                    </Box>
-                                )}
-                                <Divider variant="inset" component="li" />
-                            </React.Fragment>
-                        ))}
+                        {comments.length ? (
+                            comments.map((comment) => (
+                                <React.Fragment key={comment.id}>
+                                    <CommentCard
+                                        comment={comment}
+                                        onDelete={onDeleteCommentModalOpen}
+                                        onReply={() =>
+                                            onReplyCommentOpen(comment.id)
+                                        }
+                                    />
+                                    {isReplyCommentOpen &&
+                                        replyingCommentId === comment.id && (
+                                            <Box sx={{ ml: 9, mb: 2 }}>
+                                                <CommentCreationForm
+                                                    article={article}
+                                                    onClose={
+                                                        onReplyCommentClose
+                                                    }
+                                                    onCommentCreated={(
+                                                        comment
+                                                    ) =>
+                                                        onCommentCreated({
+                                                            ...comment,
+                                                            comment_id:
+                                                                replyingCommentId,
+                                                        })
+                                                    }
+                                                />
+                                            </Box>
+                                        )}
+                                    <Divider variant="inset" component="li" />
+                                </React.Fragment>
+                            ))
+                        ) : (
+                            <>No comments</>
+                        )}
                     </List>
                     <DeleteModal
                         open={isDeleteCommentModalOpen}
                         onClose={onDeleteCommentModalClose}
-                        // onDelete={onDeleteHandler}
+                        onDelete={onDeleteComment}
                         title={`Delete comment?`}
                         description={`Do you want to delete this comment?`}
                     />

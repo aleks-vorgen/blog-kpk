@@ -1,12 +1,14 @@
 import { Box, Button, Grid, TextField } from "@mui/material";
 import ModalCustom from "../shared/ModalCustom";
 import { editUser, getUser } from "../services/UserService";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import UserContext from "../context/UserContext";
 
 export default function CreateEditUserModal({ open, onClose, user }) {
     const [formData, setFormData] = useState({
         name: user?.name || "",
         email: user?.email || "",
+        image: user?.image || null,
         password: user?.password || "",
     });
 
@@ -14,30 +16,48 @@ export default function CreateEditUserModal({ open, onClose, user }) {
         setFormData({
             name: user?.name || "",
             email: user?.email || "",
+            image: user?.image || null,
             password: user?.password || "",
         });
     }, [user]);
 
+    const handleInputChange = (event) => {
+        const { name, value, files } = event.target;
+
+        if (name === "image" && files.length) {
+            const imageFile = files[0];
+            setFormData((prevData) => ({
+                ...prevData,
+                [name]: imageFile,
+            }));
+        } else {
+            setFormData((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }));
+        }
+    };
+
     const onCreateEditHandler = (event) => {
         event.preventDefault();
-        const { name, email } = formData;
 
         if (user.id) {
             const id = user.id;
-            editUser(id, name, email);
+
+            const newFormData = new FormData();
+            newFormData.append("name", formData.name);
+            newFormData.append("email", formData.email);
+
+            if (formData.image) {
+                newFormData.append("image", formData.image);
+            }
+
+            editUser(id, newFormData);
         } else {
             console.log("create user");
         }
 
         onClose();
-    };
-
-    const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
     };
 
     return (
@@ -77,6 +97,7 @@ export default function CreateEditUserModal({ open, onClose, user }) {
                                 type="file"
                                 id="image"
                                 autoComplete="image"
+                                onChange={handleInputChange}
                             />
                         </Grid>
                         <Grid item xs={12}>

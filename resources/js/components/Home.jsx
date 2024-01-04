@@ -6,12 +6,15 @@ import { Button, Pagination } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import PostCard from "./post/PostCard";
 import Search from "./search/Search";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getArticles } from "./services/ArticleService";
 
 export default function Home() {
     const [page, setPage] = useState(1);
     const [articles, setArticles] = useState([]);
+    const [text, setText] = useState("");
+
+    const pageSize = useMemo(() => 6);
 
     useEffect(() => {
         getArticles()
@@ -23,8 +26,12 @@ export default function Home() {
             });
     }, []);
 
-    const handleChange = (event, value) => {
+    const handlePageChange = (event, value) => {
         setPage(value);
+    };
+
+    const handleInputChange = (event) => {
+        setText(event.target.value);
     };
 
     return (
@@ -64,27 +71,34 @@ export default function Home() {
                 spacing={4}
             >
                 <Box sx={{ display: "flex", my: 2 }}>
-                    <Search />
+                    <Search value={text} onChange={handleInputChange} />
                 </Box>
                 <Grid container spacing={4}>
-                    {articles.map((article) => (
-                        <Grid item key={article} xs={12} sm={6} md={4}>
-                            <PostCard article={article}>
-                                <Button
-                                    size="small"
-                                    component={RouterLink}
-                                    to={`/posts/post`}
-                                >
-                                    Post Comment
-                                </Button>
-                            </PostCard>
-                        </Grid>
-                    ))}
+                    {articles
+                        .filter(
+                            (_, index) =>
+                                index >= (page - 1) * pageSize &&
+                                index < page * pageSize
+                        )
+                        .filter((article) => article.tag.includes(text))
+                        .map((article) => (
+                            <Grid item key={article} xs={12} sm={6} md={4}>
+                                <PostCard article={article}>
+                                    <Button
+                                        size="small"
+                                        component={RouterLink}
+                                        to={`/posts/post/${article.id}`}
+                                    >
+                                        Post Comment
+                                    </Button>
+                                </PostCard>
+                            </Grid>
+                        ))}
                 </Grid>
                 <Pagination
                     count={10}
                     page={page}
-                    onChange={handleChange}
+                    onChange={handlePageChange}
                     sx={{
                         display: "flex",
                         justifyContent: "center",

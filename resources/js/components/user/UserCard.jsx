@@ -14,8 +14,7 @@ export default function UserCard({ user }) {
                 sx={{
                     pt: "56.25%",
                 }}
-                src={user?.image}
-                alt={user?.name.charAt(0).toUpperCase()}
+                image={`http://127.0.0.1:8000/api/${user?.image}` }
             />
             <CardContent>
                 <Typography

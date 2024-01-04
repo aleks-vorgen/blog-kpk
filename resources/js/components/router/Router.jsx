@@ -14,7 +14,7 @@ export const Router = () => {
                     element: <Home />,
                 },
                 {
-                    path: "posts/post/",
+                    path: "posts/post/:postId",
                     children: [
                         {
                             index: true,

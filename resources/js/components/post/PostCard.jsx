@@ -73,17 +73,6 @@ export default function PostCard({ article, children }) {
                 <Typography variant="subtitle1" paragraph>
                     {article?.description}
                 </Typography>
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                    }}
-                >
-                    <Typography variant="subtitle1" color="text.secondary">
-                        {new Date(article?.created_at).toLocaleDateString()}
-                    </Typography>
-                    <Chip icon={<VisibilityIcon />} label="Viewed" />
-                </Box>
             </CardContent>
             <CardActions
                 sx={{
