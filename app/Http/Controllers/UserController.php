@@ -11,8 +11,7 @@ use Spatie\Permission\Models\Role;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class UserController extends Controller
-{
+class UserController extends Controller {
     public function index()
     {
         $users = User::all();
@@ -24,9 +23,7 @@ class UserController extends Controller
         return response()->json(['data' => $users]);
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show($id)
     {
         $user = User::where('id', $id)->first();
