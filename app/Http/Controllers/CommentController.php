@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class CommentController extends Controller {
-
+//pozor
     public function index()
     {
         $comments = Comment::all();
