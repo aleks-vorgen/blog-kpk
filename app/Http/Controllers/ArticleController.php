@@ -11,7 +11,7 @@ use App\Http\Controllers\ImageController;
 use Psy\Exception\TypeErrorException;
 
 class ArticleController extends Controller {
-// how to use pozor
+// how to use pozor in git
     public function index() {
         $articles = Article::all();
 
