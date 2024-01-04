@@ -10,11 +10,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\ImageController;
 use Psy\Exception\TypeErrorException;
 
-class ArticleController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     */
+class ArticleController extends Controller {
+
     public function index() {
         $articles = Article::all();
 
