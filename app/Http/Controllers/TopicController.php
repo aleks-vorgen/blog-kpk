@@ -6,8 +6,7 @@ use App\Models\Topic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class TopicController extends Controller
-{
+class TopicController extends Controller {
     public function index()
     {
         $topics = Topic::all();
@@ -15,9 +14,7 @@ class TopicController extends Controller
         return response()->json(['data' => $topics]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request) {
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:2|max:20'
