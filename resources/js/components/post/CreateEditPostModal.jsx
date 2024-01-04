@@ -4,7 +4,7 @@ import ModalCustom from "../shared/ModalCustom";
 import { createArticle, updateArticle } from "../services/ArticleService";
 import { getTopic, getTopics } from "../services/TopicService";
 import UserContext from "../context/UserContext";
-import axios from 'axios';
+import axios from "axios";
 
 export default function CreateEditPost({
     open,
@@ -102,11 +102,16 @@ export default function CreateEditPost({
             if (article) {
                 // Update existing article
                 const response = await updateArticle(article.id, newFormData);
+                setOwnArticles((prev) =>
+                    prev.map((old) =>
+                        article.id != old.id ? old : response.data
+                    )
+                );
                 console.log("Updated article:", response);
             } else {
                 // Create a new article
                 const response = await createArticle(newFormData);
-                setOwnArticles((prev) => prev.concat(response));
+                setOwnArticles((prev) => prev.concat(response.data));
                 console.log("Created article:", response);
             }
         } catch (error) {

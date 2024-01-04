@@ -9,6 +9,23 @@ export default function UserForm({ user }) {
         image: user?.image,
     });
 
+    const handleInputChange = (event) => {
+        const { name, value, files } = event.target;
+
+        if (name === "image" && files.length) {
+            const imageFile = files[0];
+            setFormData((prevData) => ({
+                ...prevData,
+                [name]: imageFile,
+            }));
+        } else {
+            setFormData((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }));
+        }
+    };
+
     useEffect(() => {
         setFormData({
             name: user?.name,
@@ -30,14 +47,6 @@ export default function UserForm({ user }) {
         }
 
         editUser(id, newFormData);
-    };
-
-    const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
     };
 
     return (
